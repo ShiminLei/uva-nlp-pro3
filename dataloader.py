@@ -43,8 +43,6 @@ class DataLoader:
 
         input_tensors_seq = [self.numpy_to_tensors(s[:-1]) for s in sentences]
         target_tensors_seq = [self.numpy_to_tensors(s[1:]) for s in sentences]  # 16个长短不一致的列表
-        # print(len(target_tensors_seq[0]))
-        # print(len(target_tensors_seq[1]))
 
         # any padding value is fine, coz it will packed with actual length in the model
         input_tensor = nn.utils.rnn.pad_sequence(input_tensors_seq)  # shape:(最长长度, batch-size)
@@ -53,6 +51,7 @@ class DataLoader:
         # shape (token_length) sum of each sentence length
         target_tensor = nn.utils.rnn.pack_sequence(target_tensors_seq).data
         # print(target_tensor.shape)
+
 
         return input_tensor, target_tensor, torch.tensor(lengths)
 
@@ -69,7 +68,7 @@ class DataLoader:
             target_tensors_seq = [self.numpy_to_tensors(s[1:]) for s in sentences]  # 16个长短不一致的列表
 
             input_tensor = nn.utils.rnn.pad_sequence(input_tensors_seq)  # shape:(最长长度, batch-size)
-            target_tensor = nn.utils.rnn.pack_sequence(target_tensors_seq).data
+            target_tensor = nn.utils.rnn.pack_sequence(target_tensors_seq).data # shape(sum长度)
 
             yield input_tensor, target_tensor, torch.tensor(lengths)
 

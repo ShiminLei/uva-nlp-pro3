@@ -18,13 +18,14 @@ def train(model, dataloader, config):
     for i in range(start_iter + 1, config.iter_num + 1):
 
         input_tensor, target_tensor, length_tensor = dataloader.random_batch()
+        # print(input_tensor.type())
 
         input_tensor = input_tensor.to(DEVICE)
-        target_tensor = target_tensor.to(DEVICE)
+        target_tensor = target_tensor.to(DEVICE) # # sum_len
         length_tensor = length_tensor.to(DEVICE)
         # forward
-        output = model(input_tensor)
-        output_tensor = nn.utils.rnn.pack_padded_sequence(output, length_tensor).data  # shape (seq_length) sum of each sentence length
+        output = model(input_tensor) # (seq_len, batch-size, dic_size)
+        output_tensor = nn.utils.rnn.pack_padded_sequence(output, length_tensor).data  # sum_len, dic_size
 
         # 计算 目标函数
         output_loss = loss(output_tensor, target_tensor)
